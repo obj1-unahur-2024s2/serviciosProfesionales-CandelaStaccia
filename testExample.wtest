@@ -1,5 +1,5 @@
 import example.*
-describe "group of tests for pepita" {
+describe "Tests de la etapa 1" {
 
   const sanMartin = new Universidad(provincia = "Bs. As.", honorarios = 3500)
 
@@ -17,7 +17,14 @@ describe "group of tests for pepita" {
 
   const luciana = new Libre(universidad = rosario, honorarios = 3200, puedeTrabajar = ["Santa Fe", "Entre Rios"])
 
-  const empresa1 = new Empresa(profesionales = [juana, melina, rocio, luciana], honorariosReferencia = 3500)
+  const empresa1 = new Empresa(/*profesionales = [juana, melina, rocio, luciana],*/ honorariosReferencia = 3500)
+
+  method initialize() {
+    empresa1.agregarProfesional(juana)
+    empresa1.agregarProfesional(melina)
+    empresa1.agregarProfesional(rocio)
+    empresa1.agregarProfesional(luciana)
+  }
 
   test "dos de sus profesionales estudiaron en Rosario, uno en Hurlingham, ninguno (o sea cero) en San Martín." {
     assert.equals(2, empresa1.cuantos(rosario))
@@ -41,5 +48,12 @@ describe "group of tests for pepita" {
 
   test "Esta empresa es de gente acotada." {
     assert.that(empresa1.esDeGenteAcotada())
+  }
+
+  test "La empresa deja de ser acotada al agregarle a Luciana dos provincias más" {
+    luciana.agregarProvincia("Corrientes")
+    luciana.agregarProvincia("Misiones")
+    
+    assert.notThat(empresa1.esDeGenteAcotada())
   }
 }

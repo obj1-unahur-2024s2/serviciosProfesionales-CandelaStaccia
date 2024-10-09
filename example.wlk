@@ -48,12 +48,23 @@ object asociacionProfesionalesDelLitoral {
 class Libre {
     const property universidad
 
-    var property puedeTrabajar
+    var property puedeTrabajar = []
 
     var property honorarios 
 
+    var recaudacion = 0
+
     method cobrar(unImporte) {
-      
+      recaudacion = recaudacion + unImporte
+    }
+
+    method pasarDinero(unProfesional, unImporte) {
+      recaudacion = 0.max(recaudacion - unImporte)
+      unProfesional.cobrar(unImporte)
+    }
+
+    method agregarProvincia(unaProvincia) {
+      puedeTrabajar.add(unaProvincia)
     }
 }
 
@@ -61,6 +72,7 @@ class Libre {
 class Empresa {
     const property profesionales = []
     var property honorariosReferencia
+    const property clientes = #{}
 
     method agregarProfesional(unProfesional) {
       profesionales.add(unProfesional)
@@ -89,6 +101,36 @@ class Empresa {
     method puedeSatisfacer(unSolicitante) {
       return profesionales.any({p => unSolicitante.puedeSerAtendidoPor(p)})
     }
+
+    method darServicio(unSolicitante) {
+      if(self.puedeSatisfacer(unSolicitante)) {
+        const unProf = profesionales.find({p => unSolicitante.puedeSerAtendidoPor(p)})
+        unProf.cobrar(unProf.honorarios())
+        self.agregarCliente(unProf)
+      }
+    }
+
+    method agregarCliente(unCliente) {
+      clientes.add(unCliente)
+    }
+
+    method cuantosClientes() = clientes.size()
+
+    method tieneComoClienteA(unSolicitante) {
+      return clientes.contains(unSolicitante)
+    }
+
+    method esPocoAtractivo(unProfesional) {
+      return self.mismasProvinciasQue(unProfesional).any({p => p.honorarios() < unProfesional.honorarios()})
+    }//de entre los profesionales que trabajan en la misma provincia que ese profesional, hay alguno que cobre menos?
+
+    method provinciasDe(unProfesional) {
+      return unProfesional.puedeTrabajar().asSet()
+    }
+
+    method mismasProvinciasQue(unProfesional) {
+      return profesionales.filter({p => p.puedeTrabajar().asSet() == self.provinciasDe(unProfesional)})
+    }//filtra los profesionales que trabajan en las mismas provincias que ese profesional
 }
 
 ////////////////////////////////////////////////////////////////////////////////////
