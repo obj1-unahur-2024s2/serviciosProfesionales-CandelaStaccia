@@ -1,9 +1,45 @@
-import example.pepita
-
+import example.*
 describe "group of tests for pepita" {
 
-  test "pepita has initial energy" {
-    assert.equals(100, pepita.energy())
+  const sanMartin = new Universidad(provincia = "Bs. As.", honorarios = 3500)
+
+  const rosario = new Universidad(provincia = "Santa Fe", honorarios = 2800)
+  
+  const corrientes = new Universidad(provincia = "Corrientes", honorarios=4200)
+
+  const hurlingham = new Universidad(provincia = "Bs. As.", honorarios = 8800)
+
+  const juana = new AsociadoAUniversidad(universidad = rosario)
+
+  const melina = new AsociadoAlLitoral(universidad = corrientes)
+
+  const rocio = new Libre(universidad = hurlingham, honorarios = 5000, puedeTrabajar = ["Santa Fe", "Cordoba", "Bs. As."])
+
+  const luciana = new Libre(universidad = rosario, honorarios = 3200, puedeTrabajar = ["Santa Fe", "Entre Rios"])
+
+  const empresa1 = new Empresa(profesionales = [juana, melina, rocio, luciana], honorariosReferencia = 3500)
+
+  test "dos de sus profesionales estudiaron en Rosario, uno en Hurlingham, ninguno (o sea cero) en San Martín." {
+    assert.equals(2, empresa1.cuantos(rosario))
+    assert.equals(1, empresa1.cuantos(hurlingham))
+    assert.equals(0, empresa1.cuantos(sanMartin))
   }
 
+  test "como profesionales caros, solamente a Rocío." {
+    //assert.equals([rocio], empresa1.caros()) //o contain
+    assert.equals(1, empresa1.caros().size())
+  }
+
+  test "como universidades formadoras, a las de Rosario, Corrientes y Hurlingham." {
+    assert.equals(#{rosario, corrientes, hurlingham}, empresa1.formadoras())
+    //o 3 contain
+  }
+
+  test "como profesional más barato a Juana." {
+    assert.equals(juana, empresa1.masBarato())
+  }
+
+  test "Esta empresa es de gente acotada." {
+    assert.that(empresa1.esDeGenteAcotada())
+  }
 }
